@@ -31,6 +31,29 @@ const downloadMedia = url => (
     //     })
 );
 
+const uploadFileToChannel = (url, word, locale, message) => {
+    downloadMedia(url)
+        .then(
+            file => {    
+                bot.api.files.upload({
+                    file,
+                    filename: `${word}-${locale}.mp3`,
+                    title: `${word} - ${locale}`,
+                    channels: message.channel
+                },
+                (err, { ok, file }) => {
+                    if (!err && ok === true) {
+                    }
+                })
+            },
+            err => console.error('Error fetching media', err)
+        )
+        .then(
+            null,
+            err => console.error('Error uploading media', err)
+        )
+}
+
 controller.hears(['wotd'], 'direct_message,direct_mention,mention', function(bot, message) {
 
     bot.api.reactions.add({
@@ -45,7 +68,27 @@ controller.hears(['wotd'], 'direct_message,direct_mention,mention', function(bot
 
     dictionary.wordOfTheDay()
         .then(
-            ({word}) => bot.reply(message, `Today's word is *${word}*`),
+            ({word, uk, us}) => {
+
+                const replies = [
+                    `Today's word is *${word}*`
+                ];
+
+                if (!uk && !us) {
+                   replies.push(`It's unpronounceable!`);
+                }
+
+                bot.reply(message, replies.join(' '));
+
+
+                if (uk) {
+                    uploadFileToChannel(uk, word, 'UK', message);
+                }
+
+                if (us) {
+                    uploadFileToChannel(us, word, 'US', message);
+                }
+            },
             (err) => bot.reply(message, `I'm having trouble finding a word`)
         );
 
@@ -76,23 +119,17 @@ controller.hears(['how do you say (.*)'], 'direct_message,direct_mention,mention
                     text: `How do you say ${word} in <${uk}|UK> or <${us}|US>?`,
                 });
 
-                downloadMedia(uk)
-                    .then(
-                        file => {    
-                            bot.api.files.upload({
-                                file,
-                                filename: `${word}-uk.mp3`,
-                                title: `${word} - UK`,
-                                channels: message.channel
-                            },
-                            (...params) => console.log('upload result', params))
-                        },
-                        err => console.error('Error fetching media', err)
-                    )
-                    .then(
-                        null,
-                        err => console.error('Error uploading media', err)
-                    )
+               if (!uk && !us) {
+                    bot.reply(message, `It's unpronounceable!`);
+                }
+
+                if (uk) {
+                    uploadFileToChannel(uk, word, 'UK', message);
+                }
+
+                if (us) {
+                    uploadFileToChannel(us, word, 'US', message);
+                }
                 
             },
             (err) => bot.reply(message, `I'm having trouble finding a word`)
