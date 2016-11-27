@@ -11,7 +11,7 @@ if (!process.env.SLACK_TOKEN) {
 }
 
 const controller = Botkit.slackbot({
-    debug: true,
+    debug: false,
 });
 
 const bot = controller.spawn({
