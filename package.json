@@ -1,6 +1,9 @@
 {
   "name": "saybot",
   "version": "1.0.0",
+  "scripts": {
+    "start": "node index"
+  },
   "main": "index.js",
   "author": "Andrew Nicolaou <me@andrewnicolaou.co.uk>",
   "license": "MIT",
