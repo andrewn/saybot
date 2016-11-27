@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const dictionary = require('../lib/wotd')();
+
+let finder;
+
+const wotdOrSpecificWord = (word=null) => (
+  word ?
+    dictionary.word(word) :
+    dictionary.wordOfTheDay()
+);
+
+wotdOrSpecificWord(process.argv[2])
+  .then(
+    wotd => console.log(wotd)
+  );
