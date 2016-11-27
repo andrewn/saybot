@@ -5,7 +5,7 @@ const request = require('request');
 
 const createDictionary = require('./lib/wotd');
 
-if (!process.env.SLACK_BOT_TOKEN) {
+if (!process.env.SLACK_TOKEN) {
     console.log('Error: Specify token in environment');
     process.exit(1);
 }
@@ -15,7 +15,7 @@ const controller = Botkit.slackbot({
 });
 
 const bot = controller.spawn({
-    token: process.env.SLACK_BOT_TOKEN
+    token: process.env.SLACK_TOKEN
 }).startRTM();
 
 const dictionary = createDictionary();
